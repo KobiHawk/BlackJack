@@ -12,7 +12,7 @@ Card::Card(int value, char face, Suit suit) :
 	_face(face),
 	_suit(suit)
 {
-	printCard();
+	//printCard();
 }
 
 Card::~Card()
