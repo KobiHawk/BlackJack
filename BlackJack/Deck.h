@@ -2,7 +2,7 @@
 
 #include "Card.h"
 
-static int DECK_SIZE = 52;
+static const int DECK_SIZE = 52;
 
 class Deck
 {
@@ -15,6 +15,6 @@ public:
 	Card draw();
 
 private:
-	Card* deck;
+	Card* _deck;
 };
 

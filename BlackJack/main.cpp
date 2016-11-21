@@ -1,4 +1,4 @@
-#include "Deck.cpp"
+#include "Deck.h"
 
 int main() 
 {
