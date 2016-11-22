@@ -2,7 +2,8 @@
 #include <iostream>
 #include <random>
 #include <time.h>
-Deck::Deck()
+Deck::Deck() :
+	topOfDeck(0)
 {
 	srand(time(NULL));
 	initDeck();
@@ -23,20 +24,15 @@ void Deck::shuffle()
 			swap(j, (rand() % DECK_SIZE));
 		}
 	}
-
-	for (int i = 0; i < DECK_SIZE; i++)
-	{
-		_deck[i]->printCard();
-	}
-
-	while (true)
-	{
-
-	}
 }
-Card Deck::draw()
+Card* Deck::draw()
 {
-	return{ 1, 'N', SPADE };
+	if (topOfDeck >= DECK_SIZE)
+	{
+		//error
+		return new Card(0, 'N', HEART);
+	}
+	return _deck[topOfDeck++];
 }
 
 /*

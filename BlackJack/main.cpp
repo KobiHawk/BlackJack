@@ -1,8 +1,8 @@
-#include "Deck.h"
+#include "Game.h"
 
 int main() 
 {
-	Deck* deck = new Deck();
+	Game* game = new Game();
 
 	return 0;
 }

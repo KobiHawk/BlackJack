@@ -8,6 +8,8 @@ public:
 
 	int getChips() { return _chips; }
 	void drawCard(Card* card);
+	void printHand();
+	int getSum() { return _sum; }
 
 private:
 	int _chips;
