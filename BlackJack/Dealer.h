@@ -7,9 +7,6 @@ public:
 	Dealer();
 	~Dealer();
 
-	Card* getRevealedCard() { return _revealedCard; }
-
-private:
-	Card* _revealedCard;
+	Card* getRevealedCard();
 };
 

@@ -4,14 +4,16 @@ class Player
 {
 public:
 	Player();
+	Player(int chips);
 	~Player();
 
 	int getChips() { return _chips; }
 	void drawCard(Card* card);
 	void printHand();
 	int getSum() { return _sum; }
+	void changeChips(int chipChange) { _chips += chipChange; }
 
-private:
+protected:
 	int _chips;
 	int _totalCards;
 	int _sum;

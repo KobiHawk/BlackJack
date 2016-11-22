@@ -9,6 +9,14 @@ Player::Player() :
 	_isAce(false)
 {
 }
+Player::Player(int chips) :
+	_chips(chips),
+	_totalCards(0),
+	_sum(0),
+	_isAce(false)
+{
+
+}
 
 
 Player::~Player()

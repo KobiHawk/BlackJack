@@ -2,6 +2,7 @@
 #include "Deck.h"
 #include "Player.h"
 #include "Dealer.h"
+
 class Game
 {
 public:
@@ -9,6 +10,7 @@ public:
 	~Game();
 
 	void playRound();
+	void resetGame();
 	
 private:
 	Deck _deck;
