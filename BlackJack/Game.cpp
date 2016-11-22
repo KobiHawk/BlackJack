@@ -41,44 +41,134 @@ void Game::playRound()
 		_dealer.drawCard(_deck.draw());
 		_dealer.drawCard(_deck.draw());
 
+
+		bool continuePlaying = true;
+		char input = 'Q';
+
+		//check for blackjack
+		if (_player.getSum() == 21)
+		{
+			_player.printHand();
+			_player.setBlackjack(true);
+			std::cout << "You got a blackjack! Payout increased by 1.5 times!" << std::endl;
+			continuePlaying = false;
+			bust = true; // we'll set this to true to skip the bust playout at the end
+			bet *= 1.5;
+		}
+		if (_dealer.getSum() == 21)
+		{
+			_dealer.setBlackjack(true);
+		}
+
 		//loop: ask for hit, stay, split, double down, etc
 		////check for bust
-		bool continuePlaying = true;
-		char input;
 
-		while (continuePlaying)
+
+		while (continuePlaying) // get more cards/take more actions
 		{
-			std::cout << "Player cards: " << std::endl;
 			_player.printHand();
 			std::cout << std::endl;
 			
-			std::cout << "Dealer's card is: " << std::endl;
+			std::cout << "Dealer's revealed card is: " << std::endl;
 			_dealer.getRevealedCard()->printCard();
 			if (_player.getSum() <= 21)
 			{
-				std::cout << "Sum: " << _player.getSum() << ". Would you like to [H]it or [S]tay?" << std::endl;
-				std::cin >> input;
-				if (input == 'S')
+				std::cout << "Sum: " << _player.getSum() << ". Would you like to [H]it, [S]tay, S[P]lit, [D]ouble Down, or S[U]rrender? (Press E for H[E]lp.)" << std::endl;
+				
+				//get valid input
+				while ((input != 'S') && (input != 'H') && (input != 'P') && (input != 'D') && (input != 'U') && (input != 'E'))
 				{
+					std::cin >> input;
+				}
+
+				switch(input)
+				{
+				case 'S': // stay
 					continuePlaying = false;
-				}
-				else
-				{
+					break;
+				
+				case 'H': // hit
 					_player.drawCard(_deck.draw());
+					break;
+
+				case 'P': // split
+					
+					break;
+
+				case 'D': // double down
+					if ((_player.getChips() >= bet * 2) && (_player.getCards() == 2))
+					{
+						_player.drawCard(_deck.draw());
+						_player.printHand();
+						bet *= 2;
+						std::cout << "Bet is now " << bet << std::endl;
+						continuePlaying = false;
+					}
+					else
+					{
+						//player doesnt have enough chips to double down, or has more than 2 cards
+					}
+					break;
+
+				case 'U': // surrender
+					//should also add case for if player has blackjack
+					if (_dealer.getRevealedCard()->getFace() == 'A')
+					{
+						_dealer.printHand();
+						bust = true;
+						continuePlaying = false;
+						_player.changeChips(-(bet * 0.5));
+					}
+					else
+					{
+						//cant surrender
+					}
+					break;
+
+				case 'E': // help
+					displayHelpMessage();
+					break;
 				}
+				input = 'Q';
 			}
 			else
 			{
+				continuePlaying = false;
+			}
+		}
+
+		//check for player bust
+		//If the player has an ace, and it being 11 would cause them to bust
+		if (_player.getSum() > 21)
+		{
+			if (_player.getAces() < 1)
+			{
 				bust = true;
 				std::cout << "You have busted. Sum: " << _player.getSum() << std::endl;
-				continuePlaying = false;
 				_player.changeChips(-bet);
+			}
+			else //Then we ignore the ace for future bust checks and reduce the sum of their hand by 10 (A counting as 11 is now 1)
+			{
+				_player.changeAces(-1);
+				_player.changeSum(-10);
 			}
 		}
 
 		//dealer actions: hit, stay
 		////check for bust
-		if (!bust)
+		if (_player.getBlackjack() == true)
+		{
+			if (_dealer.getBlackjack() == true)
+			{
+				std::cout << "Both players have blackjack. Game is tied." << std::endl;
+			}
+			else
+			{
+				std::cout << "Player wins." << std::endl;
+				_player.changeChips(bet);
+			}
+		}
+		else if (!bust)
 		{
 			while (_dealer.getSum() < 17)
 			{
@@ -86,12 +176,12 @@ void Game::playRound()
 				_dealer.drawCard(_deck.draw());
 			}
 
-			std::cout << "Dealer's hand: " << std::endl;
 			_dealer.printHand();
 
 			if (_dealer.getSum() > 21)
 			{
 				std::cout << "Dealer busts! Sum: " << _dealer.getSum() << ". You win!" << std::endl;
+				_player.changeChips(bet); 
 			}
 			else if (_player.getSum() > _dealer.getSum())
 			{
@@ -104,8 +194,17 @@ void Game::playRound()
 			else if (_player.getSum() == _dealer.getSum())
 			{
 				std::cout << "Your sum: " << _player.getSum()
-					<< ". Dealer's sum: " << _dealer.getSum()
-					<< ". Game is tied." << std::endl;
+					<< ". Dealer's sum: " << _dealer.getSum();
+					
+				if (_dealer.getBlackjack() == false)
+				{
+					std::cout << ". Game is tied." << std::endl;
+				}
+				else
+				{
+					std::cout << ". Dealer has blackjack. Dealer wins." << std::endl;
+					_player.changeChips(-bet);
+				}
 			}
 			else
 			{
@@ -139,4 +238,18 @@ void Game::resetGame()
 	int totalChips = _player.getChips();
 	_player = Player(totalChips);
 	_dealer = Dealer();
+}
+
+void Game::displayHelpMessage()
+{
+	std::cout << "[H]it will give you another card. If you go over 21, you will bust.\n"
+		<< "[S]tay will cause you to keep your current hand. If it's higher than the dealer's \n"
+		<< "hand, you will win. If it's lower, you will lose. If they are tied, no chips are affected.\n"
+		<< "S[P]lit can only be used when your cards are the same (If you have two 8s, or two Jacks, but \n"
+		<< "not a Jack and a Queen). You will split your hand into two hands of one card each and play \n"
+		<< "them seperately. \n"
+		<< "[D]ouble Down will give you only one more card, and you will double your bet. Can only \n"
+		<< "be used when you have two cards. \n"
+		<< "S[U]rrender can only be used when the dealer is showing an Ace. You will automatically lose \n"
+		<< "the hand, but you will only lose half of your bet." << std::endl;
 }

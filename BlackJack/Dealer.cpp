@@ -1,4 +1,5 @@
 #include "Dealer.h"
+#include <iostream>
 
 Dealer::Dealer() : Player()
 {
@@ -18,5 +19,14 @@ Card* Dealer::getRevealedCard()
 	else
 	{
 		return _cards[0];
+	}
+}
+
+void Dealer::printHand()
+{
+	std::cout << "Dealer cards: " << std::endl;
+	for (int i = 0; i < _totalCards; i++)
+	{
+		_cards[i]->printCard();
 	}
 }

@@ -1,19 +1,21 @@
 #include "Player.h"
-
+#include <iostream>
 
 
 Player::Player() :
 	_chips(100),
 	_totalCards(0),
 	_sum(0),
-	_isAce(false)
+	_numAces(0),
+	_hasBlackjack(false)
 {
 }
 Player::Player(int chips) :
 	_chips(chips),
 	_totalCards(0),
 	_sum(0),
-	_isAce(false)
+	_numAces(0),
+	_hasBlackjack(false)
 {
 
 }
@@ -29,17 +31,17 @@ void Player::drawCard(Card* card)
 	_totalCards++;
 	_sum += card->getValue();
 
-	//TODO
-	/*
-	if (card->getFace == 'A')
+
+	if (card->getFace() == 'A')
 	{
-		_isAce = true;
+		_numAces++;
 	}
-	*/
+	
 }
 
 void Player::printHand()
 {
+	std::cout << "Player cards: " << std::endl;
 	for (int i = 0; i < _totalCards; i++)
 	{
 		_cards[i]->printCard();

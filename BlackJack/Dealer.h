@@ -8,5 +8,6 @@ public:
 	~Dealer();
 
 	Card* getRevealedCard();
+	void printHand();
 };
 
