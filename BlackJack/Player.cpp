@@ -36,7 +36,6 @@ void Player::drawCard(Card* card)
 	{
 		_numAces++;
 	}
-	
 }
 
 void Player::printHand()
