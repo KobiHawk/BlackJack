@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <iostream>
+#include <cctype>
 
 
 Game::Game() :
@@ -82,6 +83,7 @@ void Game::playRound()
 				while ((input != 'S') && (input != 'H') && (input != 'P') && (input != 'D') && (input != 'U') && (input != 'E'))
 				{
 					std::cin >> input;
+					input = toupper(input);
 				}
 
 				switch (input)
@@ -207,6 +209,7 @@ void Game::playRound()
 		{
 			std::cout << "Would you like to play again? [Y]es or [N]o?" << std::endl;
 			std::cin >> gameLoop;
+			gameLoop = toupper(gameLoop);
 		}
 	}
 }
@@ -253,6 +256,7 @@ void Game::splitGame(Player* thePlayer)
 			while ((input != 'S') && (input != 'H') && (input != 'E'))
 			{
 				std::cin >> input;
+				input = toupper(input);
 			}
 
 			switch (input)
