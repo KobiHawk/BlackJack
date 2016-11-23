@@ -18,21 +18,24 @@ void Game::playRound()
 {
 	char gameLoop = 'Y';
 	bool bust;
+	int split;
 	while (gameLoop == 'Y')
 	{
 		//get game ready for a new round
 		bust = false;
+		split = false;
 		resetGame();
+		_deck.shuffle();
 
 
 		//get bets
 		std::cout << "How much would you like to bet? You have " << _player.getChips() << " chips." << std::endl
 			<< "Minimum bet: " << _minBet << std::endl
 			<< "Maximum bet: " << _maxBet << std::endl;
-		int bet = 0;
-		while ((bet < _minBet) || (bet > _maxBet) || (bet > _player.getChips()))
+		_bet = 0;
+		while ((_bet < _minBet) || (_bet > _maxBet) || (_bet > _player.getChips()))
 		{
-			std::cin >> bet;
+			std::cin >> _bet;
 		}
 
 		//deal initial cards
@@ -53,7 +56,7 @@ void Game::playRound()
 			std::cout << "You got a blackjack! Payout increased by 1.5 times!" << std::endl;
 			continuePlaying = false;
 			bust = true; // we'll set this to true to skip the bust playout at the end
-			bet *= 1.5;
+			_bet *= 1.5;
 		}
 		if (_dealer.getSum() == 21)
 		{
@@ -68,33 +71,53 @@ void Game::playRound()
 		{
 			_player.printHand();
 			std::cout << std::endl;
-			
+
 			std::cout << "Dealer's revealed card is: " << std::endl;
 			_dealer.getRevealedCard()->printCard();
 			if (_player.getSum() <= 21)
 			{
 				std::cout << "Sum: " << _player.getSum() << ". Would you like to [H]it, [S]tay, S[P]lit, [D]ouble Down, or S[U]rrender? (Press E for H[E]lp.)" << std::endl;
-				
+
 				//get valid input
 				while ((input != 'S') && (input != 'H') && (input != 'P') && (input != 'D') && (input != 'U') && (input != 'E'))
 				{
 					std::cin >> input;
 				}
 
-				switch(input)
+				switch (input)
 				{
 				case 'S': // stay
 					continuePlaying = false;
 					break;
-				
+
 				case 'H': // hit
 					_player.drawCard(_deck.draw());
 					break;
 
 				case 'P': // split
-					if (_player.checkSplit())
+					if ((_player.checkSplit()) && (_player.getChips() > (_bet * 2)))
 					{
-						
+						split = true;
+						Player player1;
+						Player player2;
+
+						player1.drawCard(_player.getSpecificCard(0));
+						player2.drawCard(_player.getSpecificCard(1));
+
+						splitGame(&player1);
+						splitGame(&player2);
+
+						if (!checkBust(&player1))
+						{
+							endGame(&player1);
+						}
+						if (!checkBust(&player2))
+						{
+							endGame(&player2);
+						}
+						_player.changeChips((player1.getChips() - 100) + (player2.getChips() - 100)); // starting chip amount is 100
+
+						continuePlaying = false;
 					}
 					else
 					{
@@ -103,12 +126,12 @@ void Game::playRound()
 					break;
 
 				case 'D': // double down
-					if ((_player.getChips() >= bet * 2) && (_player.getCards() == 2))
+					if ((_player.getChips() >= _bet * 2) && (_player.getCards() == 2))
 					{
 						_player.drawCard(_deck.draw());
 						_player.printHand();
-						bet *= 2;
-						std::cout << "Bet is now " << bet << std::endl;
+						_bet *= 2;
+						std::cout << "Bet is now " << _bet << std::endl;
 						continuePlaying = false;
 					}
 					else
@@ -118,13 +141,13 @@ void Game::playRound()
 					break;
 
 				case 'U': // surrender
-					//should also add case for if player has blackjack
+						  //should also add case for if player has blackjack
 					if (_dealer.getRevealedCard()->getFace() == 'A')
 					{
 						_dealer.printHand();
 						bust = true;
 						continuePlaying = false;
-						_player.changeChips(-(bet * 0.5));
+						_player.changeChips(-(_bet * 0.5));
 					}
 					else
 					{
@@ -138,92 +161,39 @@ void Game::playRound()
 				}
 				input = 'Q';
 			}
-			else
+			else // sum > 21, so they cant take more actions
 			{
-				continuePlaying = false;
-			}
-		}
-
-		//check for player bust
-		//If the player has an ace, and it being 11 would cause them to bust
-		if (_player.getSum() > 21)
-		{
-			if (_player.getAces() < 1)
-			{
-				bust = true;
-				std::cout << "You have busted. Sum: " << _player.getSum() << std::endl;
-				_player.changeChips(-bet);
-			}
-			else //Then we ignore the ace for future bust checks and reduce the sum of their hand by 10 (A counting as 11 is now 1)
-			{
-				_player.changeAces(-1);
-				_player.changeSum(-10);
-			}
-		}
-
-		//dealer actions: hit, stay
-		////check for bust
-		if (_player.getBlackjack() == true)
-		{
-			_dealer.printHand();
-			if (_dealer.getBlackjack() == true)
-			{
-				std::cout << "Both players have blackjack. Game is tied." << std::endl;
-			}
-			else
-			{
-				std::cout << "Player wins." << std::endl;
-				_player.changeChips(bet);
-			}
-		}
-		else if (!bust)
-		{
-			while (_dealer.getSum() < 17)
-			{
-				std::cout << "Dealer hits." << std::endl;
-				_dealer.drawCard(_deck.draw());
-			}
-
-			_dealer.printHand();
-
-			if (_dealer.getSum() > 21)
-			{
-				std::cout << "Dealer busts! Sum: " << _dealer.getSum() << ". You win!" << std::endl;
-				_player.changeChips(bet); 
-			}
-			else if (_player.getSum() > _dealer.getSum())
-			{
-				std::cout << "Your sum: " << _player.getSum()
-					<< ". Dealer's sum: " << _dealer.getSum()
-					<< ". You win!" << std::endl;
-
-				_player.changeChips(bet);
-			}
-			else if (_player.getSum() == _dealer.getSum())
-			{
-				std::cout << "Your sum: " << _player.getSum()
-					<< ". Dealer's sum: " << _dealer.getSum();
-					
-				if (_dealer.getBlackjack() == false)
+				bust = checkBust(&_player);
+				if (bust)
 				{
-					std::cout << ". Game is tied." << std::endl;
+					continuePlaying = false;
+				}
+			}
+		}
+
+		if (!split)
+		{
+			//check for player bust
+
+			//check blackjack
+			if (_player.getBlackjack() == true)
+			{
+				_dealer.printHand();
+				if (_dealer.getBlackjack() == true)
+				{
+					std::cout << "Both players have blackjack. Game is tied." << std::endl;
 				}
 				else
 				{
-					std::cout << ". Dealer has blackjack. Dealer wins." << std::endl;
-					_player.changeChips(-bet);
+					std::cout << "Player wins." << std::endl;
+					_player.changeChips(_bet);
 				}
 			}
-			else
+			else if (!bust)
 			{
-				std::cout << "Your sum: " << _player.getSum()
-					<< ". Dealer's sum: " << _dealer.getSum()
-					<< ". Dealer wins." << std::endl;
-
-				_player.changeChips(-bet);
+				endGame(&_player);
 			}
 		}
-
 
 
 		//resolve end of game, pay out
@@ -262,7 +232,117 @@ void Game::displayHelpMessage()
 		<< "the hand, but you will only lose half of your bet." << std::endl;
 }
 
-void Game::endGame()
+void Game::splitGame(Player* thePlayer)
 {
+	//player has decided to split their pair, can only hit or stay after splitting
+	char input = 'Q';
+	bool continuePlaying = true;
 
+	while (continuePlaying) // get more cards/take more actions
+	{
+		thePlayer->printHand();
+		std::cout << std::endl;
+
+		std::cout << "Dealer's revealed card is: " << std::endl;
+		_dealer.getRevealedCard()->printCard();
+		if (thePlayer->getSum() <= 21)
+		{
+			std::cout << "Sum: " << thePlayer->getSum() << ". Would you like to [H]it or [S]tay? (Press E for H[E]lp.)" << std::endl;
+
+			//get valid input
+			while ((input != 'S') && (input != 'H') && (input != 'E'))
+			{
+				std::cin >> input;
+			}
+
+			switch (input)
+			{
+			case 'S': // stay
+				continuePlaying = false;
+				break;
+
+			case 'H': // hit
+				thePlayer->drawCard(_deck.draw());
+				break;
+
+			case 'E': // help
+				displayHelpMessage();
+				break;
+			}
+			input = 'Q';
+		}
+		else
+		{
+			continuePlaying = false;
+		}
+	}
+}
+
+void Game::endGame(Player* thePlayer)
+{
+	while (_dealer.getSum() < 17)
+	{
+		std::cout << "Dealer hits." << std::endl;
+		_dealer.drawCard(_deck.draw());
+	}
+
+	_dealer.printHand();
+
+	if (_dealer.getSum() > 21)
+	{
+		std::cout << "Dealer busts! Sum: " << _dealer.getSum() << ". You win!" << std::endl;
+		thePlayer->changeChips(_bet);
+	}
+	else if (_player.getSum() > _dealer.getSum())
+	{
+		std::cout << "Your sum: " << thePlayer->getSum()
+			<< ". Dealer's sum: " << _dealer.getSum()
+			<< ". You win!" << std::endl;
+
+		thePlayer->changeChips(_bet);
+	}
+	else if (_player.getSum() == _dealer.getSum())
+	{
+		std::cout << "Your sum: " << thePlayer->getSum()
+			<< ". Dealer's sum: " << _dealer.getSum();
+
+		if (_dealer.getBlackjack() == false)
+		{
+			std::cout << ". Game is tied." << std::endl;
+		}
+		else
+		{
+			std::cout << ". Dealer has blackjack. Dealer wins." << std::endl;
+			thePlayer->changeChips(-_bet);
+		}
+	}
+	else
+	{
+		std::cout << "Your sum: " << thePlayer->getSum()
+			<< ". Dealer's sum: " << _dealer.getSum()
+			<< ". Dealer wins." << std::endl;
+
+		thePlayer->changeChips(-_bet);
+	}
+}
+
+bool Game::checkBust(Player* thePlayer)
+{
+	bool result = false;
+	if (thePlayer->getSum() > 21)
+	{
+		if (thePlayer->getAces() < 1)
+		{
+			result = true;
+			std::cout << "You have busted. Sum: " << thePlayer->getSum() << std::endl;
+			thePlayer->changeChips(-_bet);
+		}
+		else //Then we ignore the ace for future bust checks and reduce the sum of their hand by 10 (A counting as 11 is now 1)
+		{
+			thePlayer->changeAces(-1);
+			thePlayer->changeSum(-10);
+		}
+	}
+
+	return result;
 }

@@ -3,7 +3,7 @@
 #include <random>
 #include <time.h>
 Deck::Deck() :
-	topOfDeck(0)
+	_topOfDeck(0)
 {
 	srand(time(NULL));
 	initDeck();
@@ -17,6 +17,7 @@ Deck::~Deck()
 
 void Deck::shuffle()
 {
+	_topOfDeck = 0;
 	for (int i = 0; i < 7; i++) // 7 iterations to increase variance
 	{
 		for (int j = 0; j < DECK_SIZE; j++)
@@ -27,12 +28,12 @@ void Deck::shuffle()
 }
 Card* Deck::draw()
 {
-	if (topOfDeck >= DECK_SIZE)
+	if (_topOfDeck >= DECK_SIZE)
 	{
 		//error
 		return new Card(0, 'N', HEART);
 	}
-	return _deck[topOfDeck++];
+	return _deck[_topOfDeck++];
 }
 
 /*

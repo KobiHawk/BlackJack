@@ -16,6 +16,7 @@ public:
 	int getSum() { return _sum; }
 	int getAces() { return _numAces; }
 	int getCards() { return _totalCards; }
+	Card* getSpecificCard(int index) { return _cards[index]; }
 	bool getBlackjack() { return _hasBlackjack; }
 
 	void changeAces(int change) { _numAces += change; }

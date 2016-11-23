@@ -10,14 +10,18 @@ public:
 	~Game();
 
 	void playRound();
+	void splitGame(Player* thePlayer);
 	void resetGame();
 	void displayHelpMessage();
-	void endGame();
+	void endGame(Player* thePlayer);
+	bool checkBust(Player* thePlayer);
+
 	
 private:
 	Deck _deck;
 	Player _player;
 	Dealer _dealer;
+	int _bet;
 	int _minBet;
 	int _maxBet;
 };

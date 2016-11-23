@@ -17,6 +17,6 @@ public:
 
 private:
 	Card* _deck[DECK_SIZE];
-	int topOfDeck; //the index of the top card of the deck.
+	int _topOfDeck; //the index of the top card of the deck.
 };
 
