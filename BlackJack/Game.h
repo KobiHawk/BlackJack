@@ -12,6 +12,7 @@ public:
 	void playRound();
 	void resetGame();
 	void displayHelpMessage();
+	void endGame();
 	
 private:
 	Deck _deck;
