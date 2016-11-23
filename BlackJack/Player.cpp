@@ -47,3 +47,18 @@ void Player::printHand()
 		_cards[i]->printCard();
 	}
 }
+
+bool Player::checkSplit()
+{
+	bool result = false;
+
+	if (_cards[0]->getValue() == _cards[1]->getValue())
+	{
+		if (_cards[0]->getFace() == _cards[1]->getFace())
+		{
+			result = true;
+		}
+	}
+
+	return result;
+}

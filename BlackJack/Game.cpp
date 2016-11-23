@@ -92,7 +92,14 @@ void Game::playRound()
 					break;
 
 				case 'P': // split
-					
+					if (_player.checkSplit())
+					{
+						
+					}
+					else
+					{
+						//can't split
+					}
 					break;
 
 				case 'D': // double down
@@ -158,6 +165,7 @@ void Game::playRound()
 		////check for bust
 		if (_player.getBlackjack() == true)
 		{
+			_dealer.printHand();
 			if (_dealer.getBlackjack() == true)
 			{
 				std::cout << "Both players have blackjack. Game is tied." << std::endl;
@@ -252,4 +260,9 @@ void Game::displayHelpMessage()
 		<< "be used when you have two cards. \n"
 		<< "S[U]rrender can only be used when the dealer is showing an Ace. You will automatically lose \n"
 		<< "the hand, but you will only lose half of your bet." << std::endl;
+}
+
+void Game::endGame()
+{
+
 }

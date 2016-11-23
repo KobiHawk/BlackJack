@@ -10,6 +10,7 @@ public:
 	
 	void drawCard(Card* card);
 	void printHand();
+	bool checkSplit();
 
 	int getChips() { return _chips; }
 	int getSum() { return _sum; }
