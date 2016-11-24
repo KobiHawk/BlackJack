@@ -1,12 +1,16 @@
 #pragma once
 #include "Deck.h"
+#include "DebugDeck.h"
 #include "Player.h"
 #include "Dealer.h"
+
+static const int MIN_BET = 5;
+static const int MAX_BET = 500;
 
 class Game
 {
 public:
-	Game();
+	Game(bool debug);
 	~Game();
 
 	void playRound();
@@ -18,11 +22,9 @@ public:
 
 	
 private:
-	Deck _deck;
+	DebugDeck _deck;
 	Player _player;
 	Dealer _dealer;
 	int _bet;
-	int _minBet;
-	int _maxBet;
 };
 

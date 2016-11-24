@@ -2,7 +2,7 @@
 
 int main() 
 {
-	Game* game = new Game();
+	Game* game = new Game(true); // parameter: debug?
 
 	return 0;
 }

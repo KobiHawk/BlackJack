@@ -1,7 +1,7 @@
 #include "Card.h"
 #include <iostream>
 Card::Card() :
-	_value(0),
+	_value( 0),
 	_face('N'),
 	_suit(HEART)
 {
@@ -38,7 +38,6 @@ void Card::printCard()
 		case 'A':
 			std::cout << "Ace of ";
 			break;
-
 		case 'J':
 			std::cout << "Jack of ";
 			break;

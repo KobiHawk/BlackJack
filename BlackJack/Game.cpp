@@ -1,13 +1,26 @@
 #include "Game.h"
+#include "DebugDeck.h"
 #include <iostream>
 #include <cctype>
 
 
-Game::Game() :
-	_minBet(5),
-	_maxBet(500)
+Game::Game(bool debug)
 {
-	playRound();
+	if (!debug)
+	{
+		playRound();
+	}
+	else
+	{
+		/*
+		_deck = DebugDeck();
+		for (int i = 0; i < 6; i++)
+		{
+			_deck[i]->printCard();
+		}
+		*/
+		playRound();
+	}
 }
 
 
@@ -31,10 +44,10 @@ void Game::playRound()
 
 		//get bets
 		std::cout << "How much would you like to bet? You have " << _player.getChips() << " chips." << std::endl
-			<< "Minimum bet: " << _minBet << std::endl
-			<< "Maximum bet: " << _maxBet << std::endl;
+			<< "Minimum bet: " << MIN_BET << std::endl
+			<< "Maximum bet: " << MAX_BET << std::endl;
 		_bet = 0;
-		while ((_bet < _minBet) || (_bet > _maxBet) || (_bet > _player.getChips()))
+		while ((_bet < MIN_BET) || (_bet > MAX_BET) || (_bet > _player.getChips()))
 		{
 			std::cin >> _bet;
 		}
@@ -45,9 +58,7 @@ void Game::playRound()
 		_dealer.drawCard(_deck.draw());
 		_dealer.drawCard(_deck.draw());
 
-
 		bool continuePlaying = true;
-		char input = 'Q';
 
 		//check for blackjack
 		if (_player.getSum() == 21)
@@ -56,13 +67,17 @@ void Game::playRound()
 			_player.setBlackjack(true);
 			std::cout << "You got a blackjack! Payout increased by 1.5 times!" << std::endl;
 			continuePlaying = false;
-			bust = true; // we'll set this to true to skip the bust playout at the end
+			bust = true; // we'll set this to true to skip the bust playout at the end, since we know we're not busting
 			_bet *= 1.5;
 		}
 		if (_dealer.getSum() == 21)
 		{
 			_dealer.setBlackjack(true);
 		}
+
+
+		
+		char input = 'Q';
 
 		//loop: ask for hit, stay, split, double down, etc
 		////check for bust
@@ -82,6 +97,7 @@ void Game::playRound()
 				//get valid input
 				while ((input != 'S') && (input != 'H') && (input != 'P') && (input != 'D') && (input != 'U') && (input != 'E'))
 				{
+					
 					std::cin >> input;
 					input = toupper(input);
 				}
@@ -200,7 +216,7 @@ void Game::playRound()
 
 		//resolve end of game, pay out
 		//ask to play again? go back to top
-		if (_player.getChips() < _minBet)
+		if (_player.getChips() < MIN_BET)
 		{
 			std::cout << "You are out of chips. Thank you for playing." << std::endl;
 			gameLoop = 'N';
