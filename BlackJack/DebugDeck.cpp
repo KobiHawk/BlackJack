@@ -5,8 +5,8 @@
 
 DebugDeck::DebugDeck()
 {
-	srand(time(NULL));
-	initDeck();
+		srand(time(NULL));
+		initDeck();
 }
 
 
@@ -59,31 +59,16 @@ void DebugDeck::initDeck()
 
 		_deck[totalCards] = new Card(valueInput, charInput, (Suit)(rand() % 4)); // rand() % 4, there are 4 suits, suit doesn't matter for blackjack so we don't bog the user down with choosing it
 	}
+	
 	for (int i = totalCards; i < DECK_SIZE; i++)
 	{
 		_deck[i] = new Card(0, 'N', HEART); // fill the rest of the deck with hearts to prevent crashing. Only relevant if user forgets to load enough cards.
 	}
-
+	
 	/*
-	int totalCards = 0;
-	for (int i = 0; i < 4; i++) // Suits
+	for (int i = 0; i < 52; i++)
 	{
-		for (int j = 2; j < 11; j++) // Values
-		{
-			_deck[totalCards] = new Card(j, 'N', (Suit)i);
-
-			totalCards++;
-		}
-
-		//Add the face cards
-		_deck[totalCards] = new Card(11, 'A', (Suit)i);
-		totalCards++;
-		_deck[totalCards] = new Card(10, 'J', (Suit)i);
-		totalCards++;
-		_deck[totalCards] = new Card(10, 'Q', (Suit)i);
-		totalCards++;
-		_deck[totalCards] = new Card(10, 'K', (Suit)i);
-		totalCards++;
+		_deck[i]->printCard();
 	}
 	*/
 }

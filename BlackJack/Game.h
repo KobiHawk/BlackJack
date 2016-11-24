@@ -26,5 +26,6 @@ private:
 	Player _player;
 	Dealer _dealer;
 	int _bet;
+	bool _debug;
 };
 

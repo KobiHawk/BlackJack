@@ -4,23 +4,10 @@
 #include <cctype>
 
 
-Game::Game(bool debug)
+Game::Game(bool debug) :
+	_debug(debug)
 {
-	if (!debug)
-	{
-		playRound();
-	}
-	else
-	{
-		/*
-		_deck = DebugDeck();
-		for (int i = 0; i < 6; i++)
-		{
-			_deck[i]->printCard();
-		}
-		*/
-		playRound();
-	}
+	playRound();
 }
 
 
@@ -39,7 +26,10 @@ void Game::playRound()
 		bust = false;
 		split = false;
 		resetGame();
-		_deck.shuffle();
+		if (!_debug)
+		{
+			_deck.shuffle();
+		}
 
 
 		//get bets
