@@ -4,8 +4,7 @@
 #include <cctype>
 
 
-Game::Game(bool debug) :
-	_debug(debug)
+Game::Game()
 {
 	playRound();
 }
@@ -26,10 +25,12 @@ void Game::playRound()
 		bust = false;
 		split = false;
 		resetGame();
-		if (!_debug)
-		{
-			_deck.shuffle();
-		}
+
+//we only want to shuffle in a normal game, not in debug mode
+#ifndef _BLACKJACK_DEBUG
+		_deck.shuffle();
+#endif
+		
 
 
 		//get bets

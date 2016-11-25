@@ -56,5 +56,8 @@
     <ClInclude Include="DebugDeck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Flags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

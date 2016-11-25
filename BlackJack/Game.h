@@ -3,14 +3,16 @@
 #include "DebugDeck.h"
 #include "Player.h"
 #include "Dealer.h"
+#include "Flags.h"
 
 static const int MIN_BET = 5;
 static const int MAX_BET = 500;
 
+
 class Game
 {
 public:
-	Game(bool debug);
+	Game();
 	~Game();
 
 	void playRound();
@@ -22,10 +24,13 @@ public:
 
 	
 private:
+#ifdef _BLACKJACK_DEBUG
 	DebugDeck _deck;
+#else 
+	Deck _deck;
+#endif
 	Player _player;
 	Dealer _dealer;
 	int _bet;
-	bool _debug;
 };
 
