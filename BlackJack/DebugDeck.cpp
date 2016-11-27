@@ -14,6 +14,15 @@ DebugDeck::~DebugDeck()
 {
 }
 
+/*
+void DebugDeck::initDeck()
+
+Instead of placing all 52 cards into the deck, this function allows the user
+to place whichever cards they want into the deck, in any order.
+
+Unspecified slots are filled with the 0 of Hearts, a card that does not exist,
+to make it clear once the game has gone outside the scope of the programmed cards.
+*/
 void DebugDeck::initDeck()
 {
 	int totalCards = 0;
@@ -64,11 +73,4 @@ void DebugDeck::initDeck()
 	{
 		_deck[i] = new Card(0, 'N', HEART); // fill the rest of the deck with hearts to prevent crashing. Only relevant if user forgets to load enough cards.
 	}
-	
-	/*
-	for (int i = 0; i < 52; i++)
-	{
-		_deck[i]->printCard();
-	}
-	*/
 }

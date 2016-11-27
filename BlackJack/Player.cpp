@@ -47,6 +47,7 @@ void Player::printHand()
 	}
 }
 
+//Splits can only be done on a paired hand
 bool Player::checkSplit()
 {
 	bool result = false;

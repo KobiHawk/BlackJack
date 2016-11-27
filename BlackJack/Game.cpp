@@ -14,6 +14,22 @@ Game::~Game()
 {
 }
 
+/*
+void Game::playRound()
+
+A round follows a simple checklist.
+
+1. Prepare the game for a new round.
+2. Get the player's bet.
+3. Deal hands.
+4. Check for blackjack.
+5. Ask the player which actions they would like to take. (Hit, stay, etc)
+6. Check for bust.
+7. Go to 4 until player is done taking actions, or they bust.
+8. If the player did not bust, the dealer will take their actions. (This is handled by endGame(Player* thePlayer)).
+9. Compare hands and pay out.
+10. Check if the player can afford a new round, and if they would like to play again. Go to 1 if yes.
+*/
 void Game::playRound()
 {
 	char gameLoop = 'Y';
@@ -124,6 +140,8 @@ void Game::playRound()
 						{
 							endGame(&player2);
 						}
+
+						//When the splitGame is done, the chips from the new players are funneled back into the original player.
 						_player.changeChips((player1.getChips() - 100) + (player2.getChips() - 100)); // starting chip amount is 100
 
 						continuePlaying = false;
@@ -242,6 +260,14 @@ void Game::displayHelpMessage()
 		<< "the hand, but you will only lose half of your bet." << std::endl;
 }
 
+/*
+void Game::splitGame(Player* thePlayer)
+
+If the player decides to split their hand, the game becomes split into two one-card hands.
+playRound will pass both cards in the player's hand individually to splitGame.
+The game proceeds normally, except the player can only take the Hit and Stay actions.
+
+*/
 void Game::splitGame(Player* thePlayer)
 {
 	//player has decided to split their pair, can only hit or stay after splitting
@@ -289,6 +315,16 @@ void Game::splitGame(Player* thePlayer)
 	}
 }
 
+/*
+void Game::endGame(Player* thePlayer)
+endGame controls the dealer's actions, then pays out to the player.
+The dealer must take specific actions on its turn, so there is very little logic required.
+
+1. The dealer must hit on a sum of 16 or lower.
+2. The dealer must stay on a sum of 17 or higher.
+
+
+*/
 void Game::endGame(Player* thePlayer)
 {
 	while (_dealer.getSum() < 17)

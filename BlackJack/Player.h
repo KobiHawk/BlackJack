@@ -1,5 +1,17 @@
 #pragma once
 #include "Card.h"
+/*
+Player.h
+
+This is the class that the user will control to play the game.
+
+int _chips: The number of chips the player currently has.
+int _totalCards: The number of cards the player currently has.
+int _sum: The sum total of the player's hand.
+int _numAces: The number of Aces in the player's hand. This is used when calculating bust.
+Card* _cards[11]: An array of each card in the player's hand.
+bool _hasBlackjack: If the player has a blackjack, most of the game can be skipped.
+*/
 class Player
 {
 public:

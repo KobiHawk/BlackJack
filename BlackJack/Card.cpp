@@ -1,11 +1,13 @@
 #include "Card.h"
 #include <iostream>
 Card::Card() :
-	_value( 0),
+	_value(0),
 	_face('N'),
 	_suit(HEART)
 {
 	//default constructor
+	//the 0 of Hearts is used throughout the program as a sign that
+	//the user is not where they should be
 }
 Card::Card(int value, char face, Suit suit) :
 	_value(value),
